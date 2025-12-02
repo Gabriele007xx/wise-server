@@ -80,7 +80,7 @@ routerHoldings.post('/:id', async (req, res) => {
 
 });
 
-routerHoldings.post('/update/:id', async (req, res) => {
+routerHoldings.put('/:id', async (req, res) => {
     const { currencyID, quantity } = req.body;
     const userID = req.params.id;
     const authHeader = req.headers["authorization"];
@@ -106,4 +106,29 @@ routerHoldings.post('/update/:id', async (req, res) => {
     }
 });
 
+routerHoldings.delete('delete/:id/', async(res,req)=>{
+const { currency } = req.body.curency;
+    const userID = req.params.id;
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+
+    let db = await getDb();
+    const auth = await db.get('SELECT * FROM auth WHERE token = ?', [token]);   
+    if (!auth) {
+        return res.status(403).json({ message: 'Token non valido' });
+    }
+    if (parseInt(userID) !== auth.userId) {
+        return res.status(403).json({ message: 'Accesso non autorizzato' });
+    }
+    try {
+            await db.run('DELETE * FROM currencyHold WHERE userId = ? AND currency = ?', [userID, currency])
+            return res.status(200).json({message: "Valuta eliminata."})
+    }
+    catch
+    {
+        console.error('Errore durante l\'aggiornamento della quantità:', error);
+        return res.status(500).json({ message: 'Errore del server durante l\'eliminamento della quantità.' });
+    }
+});
 export { routerHoldings };
+
