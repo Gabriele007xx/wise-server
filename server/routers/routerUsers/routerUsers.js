@@ -4,14 +4,13 @@ import bcrypt from "bcrypt";
 
 const routerUsers = Router();
 
-
 routerUsers.get("/", async (req, res) => {
   let db = await getDb();
   try
   {
     
     const users = await db.all("SELECT * FROM users");
-    return res.status(200).json(users);
+    return res.status(200).json(users).appendHeader("Allow-Control-Allow-Origin", "*");
   }
   catch(error)
   {

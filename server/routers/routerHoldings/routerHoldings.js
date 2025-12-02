@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { getDb } from "../../database/db.js";
 
+const routerHoldings = Router();
+
 routerHoldings.post('/add/:id', async (req, res) => {
     const { currencyID, quantity } = req.body;
     const userID = req.params.id;
@@ -98,9 +100,5 @@ routerHoldings.post('/update/:id', async (req, res) => {
         return res.status(500).json({ message: 'Errore del server durante l\'aggiornamento della quantità.' });
     }
 });
-
-
-
-const routerHoldings = Router();
 
 export { routerHoldings };
