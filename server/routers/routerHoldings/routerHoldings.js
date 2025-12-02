@@ -3,8 +3,7 @@ import { getDb } from "../../database/db.js";
 
 const routerHoldings = Router();
 
-routerHoldings.post('/add/:id', async (req, res) => {
-    const { currencyID, quantity } = req.body;
+routerHoldings.get('/:id', async (req, res) => {
     const userID = req.params.id;
 
     const authHeader = req.headers["authorization"];
@@ -24,22 +23,18 @@ routerHoldings.post('/add/:id', async (req, res) => {
     }
 
     try {
-        const existingHolding = await db.get(
-            'SELECT * FROM currencyHold WHERE userId = ? AND currency = ?',
-            [userID, currencyID]
+    
+        const holdings = await db.all(
+            'SELECT currency,amount,code,name FROM currencyHold, currencies WHERE userId = ? AND currency=currencies.id',
+            [userID]
         );
-        if (existingHolding) {
-            return res.status(409).json({ message: 'La valuta è già presente nelle tuo patrimonio.' });
+        if(!holdings){
+            return res.status(200).json({ message: 'Nessuna valuta trovata nel patrimonio.' });
         }
-
-        await db.run(
-            'INSERT INTO currencyHold (userId, currency, quantity) VALUES (?, ?, ?)',
-            [userID, currencyID, quantity]
-        );
-        return res.status(201).json({ message: 'Valuta aggiunta al patrimonio con successo.' });
+        return res.status(200).json({holdings});
     } catch (error) {
-        console.error('Errore durante l\'aggiunta della valuta al patrimonio:', error);
-        return res.status(500).json({ message: 'Errore del server durante l\'aggiunta della valuta al patrimonio.' });
+        console.error('Errore durante il recupero del patrimonio:', error);
+        return res.status(500).json({ message: 'Errore del server durante il recupero del patrimonio.' });
     }
 
 
@@ -47,7 +42,7 @@ routerHoldings.post('/add/:id', async (req, res) => {
 
 });
 
-routerHoldings.get('/:id', async (req, res) => {
+routerHoldings.post('/:id', async (req, res) => {
     const userID = req.params.id;
     const authHeader = req.headers["authorization"];
 
@@ -62,11 +57,21 @@ routerHoldings.get('/:id', async (req, res) => {
         return res.status(403).json({ message: 'Accesso non autorizzato' });
     }
     try {
-        const holdings = await db.all(
-            'SELECT * FROM currencyHold WHERE userId = ?',
-            [userID]
+        const { currencyID, quantity } = req.body;
+        const existingHolding = await db.get(
+            'SELECT * FROM currencyHold WHERE userId = ? AND currency = ?',
+            [userID, currencyID]
         );
-        return res.status(200).json(holdings);
+        if (existingHolding) {
+            return res.status(409).json({ message: 'La valuta è già presente nelle tuo patrimonio.' });
+        }
+
+
+       await db.run(
+            'INSERT INTO currencyHold (userId, currency, amount) VALUES (?, ?, ?)',
+            [userID, currencyID, quantity]
+        );
+        return res.status(200).json({ message: 'Valuta aggiunta con successo.' });
     } catch (error) {
         console.error('Errore durante il recupero del patrimonio:', error);
         return res.status(500).json({ message: 'Errore del server durante il recupero del patrimonio.' });

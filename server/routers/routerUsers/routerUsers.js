@@ -32,7 +32,9 @@ routerUsers.post("/register/", async (req, res) => {
     );
     return res.status(201).json({ id: result.lastID, name, email, message: "User created successfully"});
   } catch (error) {
+    console.error(error);
     return res.status(500).send("Error creating user: " + error.message);
+
   }
 });
 

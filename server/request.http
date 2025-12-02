@@ -37,5 +37,18 @@ Content-Type: application/json
 }
 
 ### LOGOUT USER
-GET http://localhost:3000/api/auth/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY0MjM3MzE3LCJleHAiOjE3NjQyNDA5MTd9.tAvjuP8Cq3dB0pnSJA1PFqg95NemMTWGmlMoFJYQ8uA
+GET http://localhost:1337/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzY0Njc3OTkzLCJleHAiOjE3NjQ2ODE1OTN9.jfO2CeOhkfzycUh4okyTGimWTB117xw3v6ZL6cKjduE
+### HOLDING
+POST http://localhost:1337/api/holdings/6
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzY0Njc3OTkzLCJleHAiOjE3NjQ2ODE1OTN9.jfO2CeOhkfzycUh4okyTGimWTB117xw3v6ZL6cKjduE
+
+{
+  "currencyID": 2,
+  "quantity": 1000
+}
+
+### MONEY
+GET http://localhost:1337/api/money
+Content-Type: application/json

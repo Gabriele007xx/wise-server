@@ -5,7 +5,7 @@ const routerMoney = express.Router();
 
 routerMoney.get('', async (req, res) => {
     let db =  await getDb();
-    const money = await db.all('SELECT * FROM currencies');
+    const money = await db.all('SELECT code FROM currencies');
     return res.status(200).json(money);
 });
 
